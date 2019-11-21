@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IntelliSwitch</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/intelliswitch.css">
+</head>
+
+<body>
+
+    <div class="fixed-bg">
+        <div class="container">
+            <div class="jumbotron text-center">
+
+                <div id="settings_button" class="settings-btn">
+                    <img src="img/settings.svg" />
+                </div>
+                <h1 class="display-4">IntelliSwitch</h1>
+                <p class="lead ml-5 ml-lg-0">Smart switch for your home</p>
+                <hr class="my-4">
+                <div>
+                    <div id="connection_block">
+                        <div>Not connected</div>
+                        <div class="text-center">
+                            <button id="retry_button" class="btn btn-primary btn-lg">Connect</button>
+                        </div>
+                    </div>
+
+                    <div id="sensor_output_block">
+
+                        <span>
+                            <object class=" svgClass" type="image/svg+xml" data="img/thermometer.svg"
+                                style="height: 3%; width: 10%;"></object>
+                        </span>
+
+                        <span id="room_temp" style=" font-size: 8vw; text-align: center; height: 100%;">
+                        </span>
+                        <span>
+                            <object class=" svgClass" type="image/svg+xml" data="img/humidity (2).svg"
+                                style="height: 3%; width: 10%; "></object>
+                        </span>
+                        <span id="room_hum" style=" font-size: 8vw; text-align: center; height: 100%;">
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="text-center">
+            <button id="switch_button" class="btn btn-primary btn-lg">Switch me</button>
+        </div>
+        <div class="footer navbar-default navbar-fixed-bottom ">
+            <div>
+                Connection state: <span id="connection_state">unknown</span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="scripts/intelliswitch.js?1501"></script>
+    <script src="scripts/config.js"></script>
+</body>
+
+</html>

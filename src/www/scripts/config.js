@@ -1,0 +1,1 @@
+const socket_ip = "ws://192.168.1.200"

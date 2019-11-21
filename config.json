@@ -1,0 +1,14 @@
+{
+    "IS_CONFIGURED": "NO",
+    "AUTO_IP_CONFIG":"NO",
+    "DHT_PIN" : 15,
+    "RELAY_PIN" : 32,
+    "LED_PIN" : 5,
+    "WIFI_SSID" : "Home",
+    "WIFI_PASS" : "p@ssw0rd",
+    "WIFI_IP" : "192.168.1.200",
+    "WIFI_MASK" : "255.255.255.0",
+    "WIFI_DNS" : "192.168.1.1",
+    "WIFI_GATEWAY" : "192.168.1.1"
+    
+}
