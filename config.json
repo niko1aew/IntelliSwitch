@@ -1,9 +1,11 @@
 {
-    "IS_CONFIGURED": "NO",
-    "AUTO_IP_CONFIG":"NO",
+    "IS_CONFIGURED" : "NO",
+    "AUTO_IP_CONFIG" :"NO",
+    "DEBUG" : true,
     "DHT_PIN" : 15,
     "RELAY_PIN" : 32,
     "LED_PIN" : 5,
+    "HW_SW_PIN" : 12,
     "WIFI_SSID" : "Home",
     "WIFI_PASS" : "p@ssw0rd",
     "WIFI_IP" : "192.168.1.200",

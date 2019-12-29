@@ -6,20 +6,22 @@ from time import time
 relay = None
 dht11 = None
 srv = None
+DEBUG_MODE = None
 
-
-def start_server(_relay=None, _dht11=None):
+def start_server(_relay=None, _dht11=None, _debugMode=False):
     """Run server at configured device"""
     print('Starting regular server...')
 
     global relay
     global dht11
     global srv
+    global DEBUG_MODE
 
     if (_relay!=None and _dht11!=None):
         relay = _relay
         dht11 = _dht11
-
+    DEBUG_MODE = _debugMode
+    
     srv = MicroWebSrv(webPath='www/')
     srv.MaxWebSocketRecvLen = 256
     srv.WebSocketThreaded = True
@@ -39,10 +41,9 @@ def _acceptWebSocketCallback(webSocket, httpClient):
     webSocket.RecvBinaryCallback = _recvBinaryCallback
     webSocket.ClosedCallback = _closedCallback
 
-def get_device_state(measureDHT=False):
+def get_device_state():
     """Return device state as json object"""
-    if measureDHT==True:
-        dht11.getMeasure()
+    dht11.getMeasure()
     return '{"msg_type":"state", \
     "temperature":"'+str(dht11.temperature)+'", \
     "humidity":"'+str(dht11.humidity)+'", \
@@ -62,7 +63,7 @@ def process_command(json_cmd):
         return get_device_label()
 
     if json_cmd["action"] == "device_state":
-        return get_device_state(measureDHT=True)
+        return get_device_state()
     if json_cmd["action"] == "reboot":
         machine.reset()
     if json_cmd["action"] == "stop_server":
@@ -88,21 +89,24 @@ def process_command(json_cmd):
 
                                   
 def _recvTextCallback(webSocket, msg):
-    print("RECV:" + msg)
+    if DEBUG_MODE:
+        print("RECV:" + msg)
     if msg is "ping":
         webSocket.SendText("server_ok")
         return
     try:
         json_obj = json.loads(msg)
         response = process_command(json_obj)
-        print(response)
+        if DEBUG_MODE:
+            print(response)
         webSocket.SendText(response)
     except Exception as e:
         print(str(e))
         webSocket.SendText("ECHO: %s" % msg)
 
 def _recvBinaryCallback(webSocket, data):
-    print("WS RECV DATA : %s" % data)
+    if DEBUG_MODE:
+        print("WS RECV DATA : %s" % data)
 
 def _closedCallback(webSocket):
     print("WS CLOSED")
@@ -110,11 +114,14 @@ def _closedCallback(webSocket):
 # Endpoint controllers-------------------------------------
 @MicroWebSrv.route('/api', 'POST')
 def _httpHandlerInitSettingsPost(httpClient, httpResponse):
-    print("api POST method")
+    if DEBUG_MODE:
+        print("api POST method")
     formData = httpClient.ReadRequestContentAsJSON()
-    print(formData)
+    if DEBUG_MODE:
+        print(formData)
     content=process_command(formData)
-    print("SEND: %s" % content)
+    if DEBUG_MODE:
+        print("SEND: %s" % content)
     httpResponse.WriteResponseOk( headers		 = None,
 								  contentType	 = "text/html",
 								  contentCharset = "UTF-8",

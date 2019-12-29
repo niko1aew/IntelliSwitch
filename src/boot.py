@@ -16,6 +16,7 @@ import gc
 import json
 import sys
 import webrepl
+import _thread
 from dev import Dht11, Relay
 
 esp.osdebug(None)
@@ -26,17 +27,17 @@ print('Loading config...')
 with open('config.json') as config_file:
     config = json.load(config_file)
 
+DEBUG_MODE = config['DEBUG']
+
 IS_CONFIGURED = config['IS_CONFIGURED']
 if IS_CONFIGURED == 'NO':
     # Start in AP mode and run config page
     print("Network not configured. Starting AP...")
-
     ap = network.WLAN(network.AP_IF)
     ap.active(True)
     ap.config(essid="IntelliSwitch setup", password="esp32")
     print(ap.ifconfig())
     apconfig = ap.ifconfig()
-    # sys.exit()
     # Web server init
     print('Writing config.js...')
     print(apconfig[0])
@@ -47,32 +48,35 @@ if IS_CONFIGURED == 'NO':
 
 # Define pins, init sensors
 print('Init pins and devs...')
-intTime = 0
-debTime = 100
 relay = None
 dht11 = None
+hw_sw_pin = None
+hw_sw_state = None
 
-
-# def callback(p):
-#     global intTime
-#     if utime.ticks_diff(utime.ticks_ms(), intTime) > debTime:
-#         print('switch')
-#         if relay != None:
-#             relay.switchState()
-#         intTime = utime.ticks_ms()
-
+def hw_sw_thr():
+  while True:
+    global hw_sw_pin
+    global relay
+    global hw_sw_state
+    if hw_sw_state != hw_sw_pin.value():
+      relay.switchState()
+      hw_sw_state = hw_sw_pin.value()
+    time.sleep(1)
 
 try:
-    btn_pin = Pin(12, Pin.IN, Pin.PULL_UP)
-    # btn_pin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=callback)
+    hw_sw_pin = Pin(config['HW_SW_PIN'], Pin.IN, Pin.PULL_UP)
+    hw_sw_state = hw_sw_pin.value()
     led_pin = Pin(config['LED_PIN'], Pin.OUT)
     led_pin.value(0)
     relay = Relay(config['RELAY_PIN'])
     dht11 = Dht11(config['DHT_PIN'])
 except:
     print("Error init sensors!")
+    machine.reset()
 #-----------------------------#
 
+#----Starting hardware switch polling thread-------
+_thread.start_new_thread(hw_sw_thr, ())
 
 # Connect WiFi
 print("Configuring WiFi...")
@@ -129,7 +133,7 @@ print(mac)
 # Web server init
 try:
     print("Starting web server...")
-    server.start_server(relay, dht11)
+    server.start_server(relay, dht11, DEBUG_MODE)
 except:
     print("Failed to start server")
     print("Attempt to start WebRepl")
