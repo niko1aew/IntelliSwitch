@@ -43,7 +43,7 @@ def _acceptWebSocketCallback(webSocket, httpClient):
 
 def get_device_state():
     """Return device state as json object"""
-    dht11.getMeasure()
+    # dht11.getMeasure()
     return '{"msg_type":"state", \
     "temperature":"'+str(dht11.temperature)+'", \
     "humidity":"'+str(dht11.humidity)+'", \
@@ -58,12 +58,10 @@ def get_device_label():
 def process_command(json_cmd):
     """Parse json command from client"""
     global srv
-
-    if "info" in json_cmd and json_cmd["info"] == "device_label":
-        return get_device_label()
-
     if json_cmd["action"] == "device_state":
         return get_device_state()
+    if "info" in json_cmd and json_cmd["info"] == "device_label":
+        return get_device_label()
     if json_cmd["action"] == "reboot":
         machine.reset()
     if json_cmd["action"] == "stop_server":

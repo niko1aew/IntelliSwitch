@@ -17,9 +17,10 @@ class Dht11:
         try:
             timeDelta = time()-self.measureTime
             if timeDelta > self.measureInterval:
-                print("DHT measuring...")
-                self.dhtSensor.measure()
+                # print("DHT measuring...")
                 self.measureTime = time()
+                self.dhtSensor.measure()
+                # print("measure OK")
             temp,hum = self.dhtSensor.temperature(), self.dhtSensor.humidity()
             if all(isinstance(i, int) for i in [temp, hum]):
                 self.temperature = temp

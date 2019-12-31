@@ -10,14 +10,12 @@ class Relay:
     def switchON(self):
         print("Switching relay ON")
         self.state = True
-        self.relayPin.on()
-        print(type(self.relayPin))
-        print(self.relayPin)
+        self.relayPin.off()
 
     def switchOFF(self):
         print("Switching relay OFF")
         self.state = False
-        self.relayPin.off()
+        self.relayPin.on()
 
     def switchState(self):
         self.state = not self.state

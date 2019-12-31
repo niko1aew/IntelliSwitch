@@ -63,6 +63,13 @@ def hw_sw_thr():
       hw_sw_state = hw_sw_pin.value()
     time.sleep(1)
 
+def dht_polling_thr():
+  while True:
+    global dht11
+    if not dht11.getMeasure():
+      reset()
+    time.sleep(60)
+
 try:
     hw_sw_pin = Pin(config['HW_SW_PIN'], Pin.IN, Pin.PULL_UP)
     hw_sw_state = hw_sw_pin.value()
@@ -72,11 +79,14 @@ try:
     dht11 = Dht11(config['DHT_PIN'])
 except:
     print("Error init sensors!")
-    machine.reset()
+    reset()
 #-----------------------------#
 
 #----Starting hardware switch polling thread-------
 _thread.start_new_thread(hw_sw_thr, ())
+
+#----Starting DHT polling thread-----
+_thread.start_new_thread(dht_polling_thr, ())
 
 # Connect WiFi
 print("Configuring WiFi...")
