@@ -66,9 +66,8 @@ def hw_sw_thr():
 def dht_polling_thr():
   while True:
     global dht11
-    if not dht11.getMeasure():
-      reset()
-    time.sleep(60)
+    dht11.getMeasure()
+    time.sleep(300)
 
 try:
     hw_sw_pin = Pin(config['HW_SW_PIN'], Pin.IN, Pin.PULL_UP)
@@ -79,7 +78,7 @@ try:
     dht11 = Dht11(config['DHT_PIN'])
 except:
     print("Error init sensors!")
-    reset()
+    # reset()
 #-----------------------------#
 
 #----Starting hardware switch polling thread-------
